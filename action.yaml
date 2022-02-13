@@ -1,0 +1,50 @@
+name: Create Cloudify Environment
+author: Isaac Shabtay
+description: Creates an environment by uploading a blueprint, creating a deployment and running the `install` workflow
+branding:
+  icon: cloud
+  color: white
+inputs:
+  environment-name:
+    description: Name of Cloudify environment to create
+    required: true
+  blueprint:
+    description: |
+      Path/URL to blueprint (YAML file or archive file)
+    required: true
+  inputs-file:
+    description: Path to YAML/JSON inputs file
+    required: false
+    default: "-"
+  outputs-file:
+    description: |
+      Path to JSON file to receive the Cloudify environment's outputs
+      and capabilities
+    required: false
+    default: "-"
+  labels:
+    description: |
+      A labels list of the form <key>:<value>,<key>:<value>. 
+      Any comma and colon in <value> must be escaped with \. 
+      The labels’ keys are saved in lowercase.
+    required: false
+    default: "-"
+outputs:
+  environment-data:
+    description: The Cloudify environment's outputs and capabilties
+runs:
+  using: docker
+  image: docker://ahmadiesa/cfyci:6.3.0
+  entrypoint: cfyci
+  args:
+    - create-environment
+    - '--name'
+    - ${{ inputs.environment-name }}
+    - '--blueprint'
+    - ${{ inputs.blueprint }}
+    - '--labels'
+    - ${{ inputs.labels }}
+    - '--inputs-file'
+    - ${{ inputs.inputs-file }}
+    - '--outputs-file'
+    - ${{ inputs.outputs-file }}
